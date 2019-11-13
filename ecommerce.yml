@@ -1,0 +1,39 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: ecommercejck
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  minReadySeconds: 5 
+  template:
+    metadata:
+      labels:
+        k8s-app: ecommercejck
+    spec:
+      containers:
+      - name: ecommerce
+        image: acrkeyron.azurecr.io/ecommercejck:20191112.1
+        ports:
+        - containerPort: 80
+          name: web-port
+        resources:
+          requests:
+            cpu: 250m
+          limits:
+            cpu: 500m
+    
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ecommercejck
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    k8s-app: ecommercejck
